@@ -103,7 +103,6 @@ logger.info("all_components_initialized")
 
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
-    """Логирование всех запросов"""
     start = time.time()
     response = await call_next(request)
     duration = time.time() - start
@@ -117,7 +116,7 @@ async def log_requests(request: Request, call_next):
     return response
 
 
-# ==================== Эндпоинты ====================
+
 
 @app.get("/")
 async def root():
