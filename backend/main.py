@@ -408,3 +408,40 @@ async def get_session_info(session_id: str):
     }
 
 
+@app.delete("/sessions/{session_id}")
+async def delete_session(session_id: str):
+
+    if session_id not in active_sessions:
+        raise HTTPException(404, "Сессия не найдена")
+
+    session = active_sessions[session_id]
+
+
+    if os.path.exists(session["file_path"]):
+        os.remove(session["file_path"])
+        logger.info("file_deleted", session_id=session_id, path=session["file_path"])
+
+
+    del active_sessions[session_id]
+    logger.info("session_deleted", session_id=session_id)
+
+    return {"status": "deleted", "session_id": session_id}
+
+
+
+app.mount("/static", StaticFiles(directory="../frontend"), name="static")
+
+if __name__ == "__main__":
+    import uvicorn
+
+    host = os.getenv("HOST", "0.0.0.0")
+    port = int(os.getenv("PORT", 8000))
+    debug = os.getenv("DEBUG", "True") == "True"
+
+    uvicorn.run(
+        "main:app",
+        host=host,
+        port=port,
+        reload=debug,
+        log_level="info"
+    )
