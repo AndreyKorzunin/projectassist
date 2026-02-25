@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocAssistant AI — Интеллектуальный помощник для документов</title>
+
+</head>
+<body>
+    <div>
+
+        <aside >
+            <div>
+                <div>
+                    <span >logo</span>
+                    <span >DocAssistant AI</span>
+                </div>
+                <button >
+                     Новый документ
+                </button>
+            </div>
+
+            <div>
+                <h3> Статистика</h3>
+                <div >
+                    <div >
+                        <div >0</div>
+                        <div>Документов</div>
+                    </div>
+                    <div>
+                        <div>0</div>
+                        <div >Запросов</div>
+                    </div>
+                </div>
+            </div>
+
+            <div >
+                <h3>⚙ Настройки</h3>
+                <div >
+                    <label>Тип задачи:</label>
+                    <select >
+                        <option value="answer">Ответ по документу</option>
+                        <option value="grammar_check">Проверка грамматики</option>
+                        <option value="find_repeats">Поиск повторов</option>
+                        <option value="structure_analysis">Анализ структуры</option>
+                    </select>
+                </div>
+            </div>
+
+            <div >
+                <div >
+                    <span ></span>
+                    <span >Сервис работает</span>
+                </div>
+
+            </div>
+        </aside>
+
+
+        <main >
+
+            <section >
+                <div >
+                    <div >upload</div>
+                    <h1>Добро пожаловать в DocAssistant AI</h1>
+                    <p>
+                        Загрузите документ для анализа. Поддерживаются форматы:<br>
+                        <strong>.docx</strong>, <strong>.xlsx</strong>, <strong>.pdf</strong>
+                    </p>
+
+                    <div>
+                        <div >
+                            <p> Перетащите файл сюда</p>
+                            <p >или</p>
+                            <button >
+                                Выбрать файл
+                            </button>
+                            <input type="file"  accept=".docx,.xlsx,.xls,.pdf" hidden>
+                        </div>
+                    </div>
+
+                    <div >
+                        <div >
+
+                            <span>Максимальный размер: 50 МБ</span>
+                        </div>
+                        <div>
+
+                            <span>Все данные обрабатываются локально</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <section >
+                <div >
+                    <div >
+                        <h2 > Загруженный документ</h2>
+                        <div>
+                            <span>Word</span>
+                            <span >Загрузка</span>
+                        </div>
+                    </div>
+                    <button>↩ Назад</button>
+                </div>
+
+                <div >
+                    <div >
+                        <div >
+                            <div >
+                                <div >
+                                    <p>Привет! Я готов помочь вам с анализом документа. Что вас интересует?</p>
+                                    <div >
+                                        <button  data-query="Какие основные разделы в документе?">Основные разделы</button>
+                                        <button  data-query="Есть ли в документе таблицы?">Таблицы</button>
+                                        <button  data-query="Проверь грамматику документа">Грамматика</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div >
+                            <textarea  placeholder="Введите ваш вопрос..." rows="1"></textarea>
+                            <button >
+                                <span ></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+
+    <div >
+
+        <p >Обработка</p>
+    </div>
+
+</body>
+</html>
