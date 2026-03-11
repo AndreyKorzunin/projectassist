@@ -1,9 +1,11 @@
+// ==================== DOM Elements ====================
 const chatElements = {
     chatMessages: document.getElementById('chatMessages'),
     userInput: document.getElementById('userInput'),
     sendBtn: document.getElementById('sendBtn')
 };
 
+// ==================== Event Listeners ====================
 document.addEventListener('DOMContentLoaded', () => {
     if (chatElements.sendBtn) {
         chatElements.sendBtn.addEventListener('click', sendMessage);
@@ -17,9 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        // Auto-resize textarea
         chatElements.userInput.addEventListener('input', autoResizeTextarea);
     }
 
+    // Quick reply buttons
     document.addEventListener('click', (e) => {
         if (e.target.classList.contains('quick-reply')) {
             const query = e.target.getAttribute('data-query');
@@ -32,21 +36,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// ==================== Chat Functions ====================
 async function sendMessage() {
     const message = chatElements.userInput.value.trim();
     if (!message || !window.app.getCurrentSessionId()) return;
 
+    // Add user message to chat
     addMessage(message, 'user');
     chatElements.userInput.value = '';
     autoResizeTextarea();
 
+    // Show loading indicator
     const loadingId = addLoadingMessage();
 
     try {
+        // Increment query stats
         window.app.stats.queries++;
         window.app.saveStats();
         window.app.updateStatsDisplay();
 
+        // Send to backend
         const response = await fetch('/query', {
             method: 'POST',
             headers: {
@@ -65,20 +74,23 @@ async function sendMessage() {
 
         const data = await response.json();
 
+        // Remove loading message
         removeLoadingMessage(loadingId);
 
+        // Process response based on task type
         processResponse(data, message);
 
+        // Scroll to bottom
         scrollToBottom();
 
     } catch (error) {
-        console.error(' Chat error:', error);
+        console.error('❌ Chat error:', error);
         removeLoadingMessage(loadingId);
         addMessage(`Ошибка: ${error.message}`, 'error');
     }
 }
 
-
+// ==================== Message Management ====================
 function addMessage(text, type = 'bot') {
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${type}-message`;
@@ -86,10 +98,11 @@ function addMessage(text, type = 'bot') {
     let content = '';
 
     if (type === 'error') {
-        content = `<div class="message-content"><p> ${text}</p></div>`;
+        content = `<div class="message-content"><p>⚠️ ${text}</p></div>`;
     } else if (type === 'info') {
-        content = `<div class="message-content"><p> ${text}</p></div>`;
+        content = `<div class="message-content"><p>ℹ️ ${text}</p></div>`;
     } else {
+        // Format text with markdown-like features
         content = `<div class="message-content"><p>${formatMessage(text)}</p></div>`;
     }
 
@@ -124,8 +137,9 @@ function scrollToBottom() {
     chatElements.chatMessages.scrollTop = chatElements.chatMessages.scrollHeight;
 }
 
+// ==================== Response Processing ====================
 function processResponse(data, originalQuery) {
-    console.log('Response received:', data);
+    console.log('📥 Response received:', data);
 
     if (data.task_type === 'answer') {
         processAnswerResponse(data.result);
@@ -147,8 +161,9 @@ function processAnswerResponse(result) {
 }
 
 function processGrammarResponse(result) {
-    let message = ' <strong>Результаты проверки грамматики:</strong>\n\n';
+    let message = '📝 <strong>Результаты проверки грамматики:</strong>\n\n';
 
+    // Grammar issues
     if (result.grammar && result.grammar.status === 'success') {
         message += `<strong>Ошибки (${result.grammar.total_issues}):</strong>\n`;
 
@@ -163,17 +178,17 @@ function processGrammarResponse(result) {
                 message += `\n• <em>${issue.context}</em>\n`;
                 message += `  ${issue.message}\n`;
                 if (issue.suggestions && issue.suggestions.length > 0) {
-                    message += `   Вариант: "${issue.suggestions[0]}"\n`;
+                    message += `  💡 Вариант: "${issue.suggestions[0]}"\n`;
                 }
             });
         } else {
-            message += ' Ошибок не найдено!\n';
+            message += '✅ Ошибок не найдено!\n';
         }
     } else if (result.grammar && result.grammar.status === 'disabled') {
-        message += ' Проверка грамматики недоступна.\n';
+        message += '⚠️ Проверка грамматики недоступна.\n';
     }
 
-
+    // Style analysis
     if (result.style) {
         message += '\n<strong>Стилистический анализ:</strong>\n';
         message += `Найдено проблем: ${result.style.total_issues}\n\n`;
@@ -198,7 +213,7 @@ function processGrammarResponse(result) {
 }
 
 function processRepeatsResponse(result) {
-    let message = ' <strong>Анализ повторяющихся фраз:</strong>\n\n';
+    let message = '🔄 <strong>Анализ повторяющихся фраз:</strong>\n\n';
 
     if (result.exact_duplicates && result.exact_duplicates.length > 0) {
         message += `<strong>Точные повторы (${result.exact_duplicates.length}):</strong>\n`;
@@ -206,7 +221,7 @@ function processRepeatsResponse(result) {
             message += `\n• "${dup.text}" (встречается ${dup.count} раз)\n`;
         });
     } else {
-        message += ' Точных повторов не найдено\n';
+        message += '✅ Точных повторов не найдено\n';
     }
 
     if (result.common_words && result.common_words.length > 0) {
@@ -216,7 +231,7 @@ function processRepeatsResponse(result) {
         });
     }
 
-    message += `\n <strong>Статистика:</strong>\n`;
+    message += `\n📊 <strong>Статистика:</strong>\n`;
     message += `- Всего предложений: ${result.total_sentences}\n`;
     message += `- Уникальных: ${result.unique_sentences}\n`;
     message += `- Коэффициент избыточности: ${(result.redundancy_score * 100).toFixed(1)}%\n`;
@@ -225,7 +240,7 @@ function processRepeatsResponse(result) {
 }
 
 function processStructureResponse(result) {
-    let message = ' <strong>Анализ структуры документа:</strong>\n\n';
+    let message = '📊 <strong>Анализ структуры документа:</strong>\n\n';
 
     if (result.document_type === 'Word') {
         message += `<strong>Заголовки:</strong>\n`;
@@ -253,34 +268,46 @@ function processStructureResponse(result) {
             });
         }
     } else if (result.document_type === 'Excel') {
+        message += `<strong>Листы (${result.sheets_count}):</strong>\n`;
 
+        for (const [sheetName, sheetData] of Object.entries(result.sheets)) {
+            message += `\n${sheetName}:\n`;
+            message += `- Строк: ${sheetData.rows}\n`;
+            message += `- Столбцов: ${sheetData.cols}\n`;
+            message += `- Заголовки: ${sheetData.has_headers ? 'Да' : 'Нет'}\n`;
+            message += `- Числовые столбцы: ${sheetData.numeric_columns}\n`;
         }
 
         if (result.recommendations && result.recommendations.length > 0) {
-            
+            message += `\n<strong>Рекомендации:</strong>\n`;
+            result.recommendations.forEach(rec => {
+                message += `• ${rec}\n`;
+            });
         }
     }
 
     addMessage(message);
 }
 
+// ==================== Text Formatting ====================
 function formatMessage(text) {
-
+    // Convert **bold** to <strong>
     text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
-
+    // Convert *italic* to <em>
     text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
 
-
+    // Convert newlines to <br>
     text = text.replace(/\n/g, '<br>');
 
+    // Convert markdown lists to HTML
     text = text.replace(/^\s*-\s+(.*)$/gm, '<li>$1</li>');
     text = text.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
 
     return text;
 }
 
-
+// ==================== Utilities ====================
 function autoResizeTextarea() {
     if (chatElements.userInput) {
         chatElements.userInput.style.height = 'auto';
