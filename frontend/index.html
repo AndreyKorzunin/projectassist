@@ -3,42 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DocAssistant AI </title>
-
+    <title>DocAssistant AI — Интеллектуальный помощник для документов</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/chat.css">
+    <link rel="icon" href="image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22></text></svg>">
 </head>
 <body>
-    <div>
-
-        <aside >
-            <div>
-                <div>
-                    <span >logo</span>
-                    <span >DocAssistant AI</span>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon"></span>
+                    <span class="logo-text">DocAssistant AI</span>
                 </div>
-                <button >
-                     Новый документ
+                <button class="btn btn-primary btn-block" id="newSessionBtn">
+                    Новый документ
                 </button>
             </div>
 
-            <div>
-                <h3> Статистика</h3>
-                <div >
-                    <div >
-                        <div >0</div>
-                        <div>Документов</div>
+            <div class="sidebar-section">
+                <h3>Статистика</h3>
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="docsCount">0</div>
+                        <div class="stat-label">Документов</div>
                     </div>
-                    <div>
-                        <div>0</div>
-                        <div >Запросов</div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="queriesCount">0</div>
+                        <div class="stat-label">Запросов</div>
                     </div>
                 </div>
             </div>
 
-            <div >
-                <h3>Настройки</h3>
-                <div >
+            <div class="sidebar-section">
+                <h3> Настройки</h3>
+                <div class="settings-item">
                     <label>Тип задачи:</label>
-                    <select >
+                    <select id="taskTypeSelect" class="form-control">
                         <option value="answer">Ответ по документу</option>
                         <option value="grammar_check">Проверка грамматики</option>
                         <option value="find_repeats">Поиск повторов</option>
@@ -47,45 +48,44 @@
                 </div>
             </div>
 
-            <div >
-                <div >
-                    <span ></span>
-                    <span >Сервис работает</span>
+            <div class="sidebar-footer">
+                <div class="status-indicator">
+                    <span class="status-dot status-online"></span>
+                    <span class="status-text">Сервис работает</span>
                 </div>
-
+                <div class="version">v1.0.0</div>
             </div>
         </aside>
 
+        <main class="main-content">
 
-        <main >
-
-            <section >
-                <div >
-                    <div >upload</div>
+            <section id="uploadSection" class="upload-section active">
+                <div class="upload-container">
+                    <div class="upload-icon"></div>
                     <h1>Добро пожаловать в DocAssistant AI</h1>
-                    <p>
+                    <p class="upload-description">
                         Загрузите документ для анализа. Поддерживаются форматы:<br>
                         <strong>.docx</strong>, <strong>.xlsx</strong>, <strong>.pdf</strong>
                     </p>
 
-                    <div>
-                        <div >
+                    <div class="drop-area" id="dropArea">
+                        <div class="drop-area-content">
                             <p> Перетащите файл сюда</p>
-                            <p >или</p>
-                            <button >
-                                Выбрать файл
+                            <p class="drop-hint">или</p>
+                            <button class="btn btn-lg btn-primary" id="browseBtn">
+                                 Выбрать файл
                             </button>
-                            <input type="file"  accept=".docx,.xlsx,.xls,.pdf" hidden>
+                            <input type="file" id="fileInput" accept=".docx,.xlsx,.xls,.pdf" hidden>
                         </div>
                     </div>
 
-                    <div >
-                        <div >
-
+                    <div class="upload-hints">
+                        <div class="hint-item">
+                            <span class="hint-icon"></span>
                             <span>Максимальный размер: 50 МБ</span>
                         </div>
-                        <div>
-
+                        <div class="hint-item">
+                            <span class="hint-icon"></span>
                             <span>Все данные обрабатываются локально</span>
                         </div>
                     </div>
@@ -93,37 +93,37 @@
             </section>
 
 
-            <section >
-                <div >
-                    <div >
-                        <h2 > Загруженный документ</h2>
-                        <div>
-                            <span>Word</span>
-                            <span >Загрузка</span>
+            <section id="documentSection" class="document-section">
+                <div class="document-header">
+                    <div class="document-info">
+                        <h2 id="docTitle">Загруженный документ</h2>
+                        <div class="document-meta">
+                            <span class="badge" id="docTypeBadge">Word</span>
+                            <span id="docStats">Загрузка...</span>
                         </div>
                     </div>
-                    <button>↩ Назад</button>
+                    <button class="btn btn-outline" id="backBtn">↩Назад</button>
                 </div>
 
-                <div >
-                    <div >
-                        <div >
-                            <div >
-                                <div >
+                <div class="document-content">
+                    <div class="chat-container" id="chatContainer">
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="message bot-message">
+                                <div class="message-content">
                                     <p>Привет! Я готов помочь вам с анализом документа. Что вас интересует?</p>
-                                    <div >
-                                        <button  data-query="Какие основные разделы в документе?">Основные разделы</button>
-                                        <button  data-query="Есть ли в документе таблицы?">Таблицы</button>
-                                        <button  data-query="Проверь грамматику документа">Грамматика</button>
+                                    <div class="quick-replies">
+                                        <button class="quick-reply" data-query="Какие основные разделы в документе?">Основные разделы</button>
+                                        <button class="quick-reply" data-query="Есть ли в документе таблицы?">Таблицы</button>
+                                        <button class="quick-reply" data-query="Проверь грамматику документа">Грамматика</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div >
-                            <textarea  placeholder="Введите ваш вопрос..." rows="1"></textarea>
-                            <button >
-                                <span ></span>
+                        <div class="chat-input-area">
+                            <textarea id="userInput" placeholder="Введите ваш вопрос..." rows="1"></textarea>
+                            <button class="btn btn-primary send-btn" id="sendBtn">
+                                <span class="send-icon">➤</span>
                             </button>
                         </div>
                     </div>
@@ -133,10 +133,12 @@
     </div>
 
 
-    <div >
-
-        <p >Обработка</p>
+    <div class="loading-overlay" id="loadingOverlay" style="display:none">
+        <div class="loading-spinner"></div>
+        <p id="loadingText">Обработка...</p>
     </div>
 
+    <script src="js/app.js"></script>
+    <script src="js/chat.js"></script>
 </body>
 </html>
